@@ -114,3 +114,30 @@
       动态的值
         <img src={logo} alt=""/>
     ```
+  3. 跨域
+   
+    ```
+      package.json
+        "proxy": "http://localhost:5000"
+
+      修改接口
+        const BASE = "";
+        // 登录接口
+        export const reqLogin = (username, password) => ajax(BASE + "/login", { username, password }, "POST");
+    ```
+  4. 存储公共数据 - store github
+
+    ```
+      下载
+        yarn add store
+      
+      utils -> memoryUtils.js
+      utils -> storageUtils.js
+
+      index.js 读取存储
+      import storageUtils from "./utils/storageUtils";
+      import memoryUtils from "./utils/memoryUtils"
+      // 读取local保存的user，保存到内存中
+      const user = storageUtils.getUser();
+      memoryUtils.user = user;
+    ```

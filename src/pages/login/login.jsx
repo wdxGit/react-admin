@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
+import { Redirect } from "react-router-dom";
 import { Form, Icon, Input, Button } from 'antd';
+import { message } from "antd";
 
 import "./login.less";
 import logo from "./images/logo.svg";
+import { reqLogin } from "../../api";
+import memoryUtils from "../../utils/memoryUtils.js";
+import storageUtils from "../../utils/storageUtils.js"
 
 /**
  * 登录的路由组件
@@ -13,16 +18,58 @@ class Login extends Component {
     // 阻止事件的默认行为
     event.preventDefault();
     // 得到from对象
-    const form = this.props.form;
+    // const form = this.props.form;
     // 获取输入数据 全部
-    form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-      }
+        // console.log('Received values of form: ', values);
+
+        // 请求函数
+        const { username, password } = values;
+        const response = await reqLogin(username, password);
+        // console.log(response.data);
+        const result = response.data;
+        if (result.status === 0) {
+          // 提示登录成功
+          message.success('登录成功');
+
+          // 保存user
+          const user = result.data;
+          memoryUtils.user = user; // 保存在内存中
+          storageUtils.saveUser(user); // 保存到local中
+          // 跳转到管理界面 使用replace切换路径 因为不用回退
+          this.props.history.replace("/");
+        } else { // 错误信息
+          message.error(result.msg);
+        }
+      } 
     });
   };
 
+  /* 对密码进行自定义验证 antd官网自定义验证 */
+  validatePwd = (rule, value, callback) => {
+    console.log("validatePwd()", rule, value );
+    if (!value) {
+      callback("密码必须输入");
+    } else if (value.length < 4) {
+      callback("密码长度不能小于4位");
+    } else if (value.length > 12) {
+      callback("密码长度不能大于12位");
+    } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      callback("密码必须是由英文、数字、下划线组成");
+    } else {
+      callback() // 验证通过
+    }
+    // callback("xxx") // 验证失败，指定提示文本
+  }
+
   render() {
+
+    // 如果用户已经登录 自动跳转到管理界面
+    const user = memoryUtils.user;
+    if (user && user._id) {
+      return <Redirect to="/"/>
+    }
 
     // 得到form对象
     const form = this.props.form;
@@ -43,8 +90,24 @@ class Login extends Component {
                  * getFieldDecorator 定义函数
                  * username 标识名称
                  */
-                getFieldDecorator('username', {
-                  rules: [{ required: true, message: 'Please input your username!' }],
+                getFieldDecorator('username', { // 配置对象：属性名是特定的一些名称
+
+                  /**
+                   * 前台表单认证
+                   *    验证要求：
+                   *       1. 必须输入
+                   *       2. 必须大于4位
+                   *       3. 必须小于12位
+                   *       4. 必须是英文、数字、下划线组成
+                   * 收集表单输入数据
+                   */
+                  rules: [ // 声明式验证：直接使用别人定义好的验证规则进行验证
+                          { required: true, whitespace: true, message: '用户名必须输入!' },
+                          { min:4, message: '用户名最少4位!' },
+                          { max: 12, message: '用户名最多12位!' },
+                          { pattern: /^[a-zA-Z0-9_]+$/, message: "用户名必须是由英文、数字、下划线组成" }
+                        ],
+                  initialValue: "admin"
                 })(
                   <Input
                     prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -55,7 +118,9 @@ class Login extends Component {
             </Form.Item>
             <Form.Item>
               {getFieldDecorator('password', {
-                rules: [{ required: true, message: 'Please input your Password!' }],
+                rules: [
+                  { validator: this.validatePwd }
+                ],
               })(
                 <Input
                   prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -109,13 +174,3 @@ class Login extends Component {
 
 const WrappedNormalLoginForm = Form.create({ name: 'normal_login' })(Login);
 export default WrappedNormalLoginForm;
-
-/**
- * 前台表单认证
- *    验证要求：
- *       1. 必须输入
- *       2. 必须大于4位
- *       3. 必须小于12位
- *       4. 必须是英文、数字、下划线组成
- * 收集表单输入数据
- */
