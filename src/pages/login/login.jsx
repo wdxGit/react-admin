@@ -4,7 +4,7 @@ import { Form, Icon, Input, Button } from 'antd';
 import { message } from "antd";
 
 import "./login.less";
-import logo from "./images/logo.svg";
+import logo from "../../assets/images/logo.svg";
 import { reqLogin } from "../../api";
 import memoryUtils from "../../utils/memoryUtils.js";
 import storageUtils from "../../utils/storageUtils.js"

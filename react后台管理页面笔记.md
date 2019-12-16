@@ -141,3 +141,13 @@
       const user = storageUtils.getUser();
       memoryUtils.user = user;
     ```
+  5. link
+
+    ```
+      引入
+      import { Link } from "react-router-dom";
+
+      <Link to="/">
+      
+      </Link>
+    ```
