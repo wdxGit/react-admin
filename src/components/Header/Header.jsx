@@ -6,9 +6,21 @@ import "./header.less";
  */
 class Header extends Component {
   render() {
-    return(
+    return (
       <div className="header">
-        Header
+        <div className="header_top">
+          <span>欢迎, Adimater</span>
+          <a href="#">退出</a>
+        </div>
+        <div className="header_bottom">
+          <div className="header_bottom_left">首页</div>
+          <div className="header_bottom_right">
+            <span>2019年12月18日23:26:05</span>
+            {/*<img src={dayPictureUrl} alt="weather" />*/}
+            
+            <span>天气</span>
+          </div>
+        </div>
       </div>
     )
   }

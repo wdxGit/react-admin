@@ -71,6 +71,37 @@
         官网 - 配置主题
   ```
 
+## 第三方
+
+  1. jsonp github
+  
+  ```
+    npm i jsonp
+
+
+    import jsonp from 'jsonp'
+
+    export const reqWeather = (city) => {
+
+    return new Promise((resolve, reject) => {
+      const url = `url`
+      // 发送jsonp请求
+      jsonp(url, {}, (err, data) => {
+        console.log('jsonp()', err, data)
+        // 如果成功了
+        if (!err && data.status==='success') {
+          // 取出需要的数据
+          ...
+        } else {
+          // 如果失败了
+          message.error('获取天气信息失败!')
+        }
+
+      })
+    })
+  }
+  ```
+
 ## 引入路由
   + 下载
 

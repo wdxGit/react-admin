@@ -36,7 +36,7 @@ class Admin extends Component {
         </Sider>
         <Layout>
           <Header></Header>
-          <Content style={{ backgroundColor: "#fff" }}>
+          <Content style={{ margin: "20px", backgroundColor: "#fff" }}>
             {/* 
               二级路由 
                 Switch匹配一个
