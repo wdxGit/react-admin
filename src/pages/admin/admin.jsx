@@ -7,9 +7,11 @@ import Home from "../home/home.jsx";
 import Category from "../category/category.jsx";
 import Product from "../product/product.jsx";
 import Role from "../role/role.jsx";
+import User from "../user/user.jsx";
 import Bar from "../charts/bar.jsx";
 import Line from "../charts/line.jsx";
 import Pie from "../charts/pie.jsx";
+import Order from "../order/order.jsx";
 
 import memoryUtils from "../../utils/memoryUtils";
 import LeftNav from "../../components/LeftNav/LeftNav.jsx";
@@ -47,9 +49,11 @@ class Admin extends Component {
               <Route path="/category" component={Category} />
               <Route path="/product" component={Product} />
               <Route path="/role" component={Role} />
-              <Route path="/bar" component={Bar} />
-              <Route path="/line" component={Line} />
-              <Route path="/pie" component={Pie} />
+              <Route path="/user" component={User} />
+              <Route path="/charts/bar" component={Bar} />
+              <Route path="/charts/line" component={Line} />
+              <Route path="/charts/pie" component={Pie} />
+              <Route path="/order" component={Order} />
               <Redirect to="/home" />
             </Switch>
           </Content>
