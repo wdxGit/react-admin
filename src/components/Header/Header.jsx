@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom'
-
+import LinkBtn from "./../../components/LinkBtn/LinkBtn";
+import { Modal } from "antd";
 
 import { reqIp, reqWeather } from "./../../api/index";
 import menuList from "../../config/menuConfig";
+
+import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from "../../utils/storageUtils";
 
 // moment时间插件
 import moment from "moment";
@@ -40,9 +44,9 @@ class Header extends Component {
 
   // 获取当前时间
   getNowTime = () => {
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       let nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      this.setState({nowTime});
+      this.setState({ nowTime });
     }, 1000);
   };
 
@@ -55,7 +59,7 @@ class Header extends Component {
         title = element.title;
       } else if (element.children) {
         // 在所有子item中查找匹配的
-        const cItem = element.children.find(cItem => pathname.indexOf(cItem.key)===0);
+        const cItem = element.children.find(cItem => pathname.indexOf(cItem.key) === 0);
         if (cItem) {
           title = cItem.title;
         }
@@ -64,14 +68,37 @@ class Header extends Component {
     return title;
   };
 
+  /** 退出登录 */
+  logOut = () => {
+    Modal.confirm({
+      content: '是否退出登录',
+      okText: '退出',
+      cancelText: '取消',
+      onOk: () => { // 使用箭头函数 会使用外部的this
+        // console.log('OK');
+        // 删除保存数据
+        storageUtils.removeUser();
+        memoryUtils.user = {};
+        // 跳转到login
+        this.props.history.replace("/login");
+      }
+    });
+  }
+
   componentDidMount = () => {
     this.getWeather();
     this.getNowTime();
   };
 
+  /** 在当前组件卸载之前 */
+  componentWillUnmount = () => {
+    // 清除定时器
+    clearInterval(this.intervalId);
+  };
+  
 
   render() {
-    
+
     // 得到标题 路由名
     const title = this.getTitle();
 
@@ -79,7 +106,7 @@ class Header extends Component {
       <div className="header">
         <div className="header_top">
           <span>欢迎, Adimater</span>
-          <a href="#">退出</a>
+          <LinkBtn onClick={this.logOut}>退出</LinkBtn>
         </div>
         <div className="header_bottom">
           <div className="header_bottom_left">{title}</div>
